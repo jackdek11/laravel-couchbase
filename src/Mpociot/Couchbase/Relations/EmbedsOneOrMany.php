@@ -389,4 +389,24 @@ abstract class EmbedsOneOrMany extends Relation
     {
         return $this->parent->getKey();
     }
+
+    /**
+     * Get the key for comparing against the parent key in "has" query.
+     *
+     * @return string
+     */
+    public function getExistenceCompareKey()
+    {
+        return $this->getQualifiedForeignKeyName();
+    }
+
+    /**
+     * Get the foreign key for the relationship.
+     *
+     * @return string
+     */
+    public function getQualifiedForeignKeyName()
+    {
+        return $this->foreignKey;
+    }
 }
