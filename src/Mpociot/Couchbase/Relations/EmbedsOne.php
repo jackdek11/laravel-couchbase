@@ -146,4 +146,24 @@ class EmbedsOne extends EmbedsOneOrMany
 
         return $this->performDelete($model);
     }
+
+    /**
+     * Get the key for comparing against the parent key in "has" query.
+     *
+     * @return string
+     */
+    public function getHasCompareKey()
+    {
+        return $this->getForeignKeyName();
+    }
+
+    /**
+     * Get the key for comparing against the parent key in "has" query.
+     *
+     * @return string
+     */
+    public function getForeignKeyName()
+    {
+        return $this->foreignKey;
+    }
 }
