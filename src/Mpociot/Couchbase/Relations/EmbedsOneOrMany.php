@@ -101,9 +101,12 @@ abstract class EmbedsOneOrMany extends Relation
     /**
      * Shorthand to get the results of the relationship.
      *
+     * TODO implement columns filter
+     *
+     * @param array $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get()
+    public function get($columns = ['*'])
     {
         return $this->getResults();
     }
