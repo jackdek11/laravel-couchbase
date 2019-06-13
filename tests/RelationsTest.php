@@ -5,15 +5,15 @@ class RelationsTest extends TestCase
     /**
      * @group RelationsTest
      */
-    public function tearDown()
+    public function tearDown():void
     {
         Mockery::close();
 
-        User::truncate();
+        //User::truncate();
         Client::truncate();
         Address::truncate();
         Book::truncate();
-        Item::truncate();
+        //Item::truncate();
         Role::truncate();
         Client::truncate();
         Group::truncate();
@@ -124,6 +124,8 @@ class RelationsTest extends TestCase
         Item::create(['type' => 'bag', 'user_id' => null]);
 
         $user = User::with('items')->find($user->_id);
+        var_dump($user);
+
 
         $items = $user->getRelation('items');
         $this->assertEquals(3, count($items));
@@ -531,6 +533,7 @@ class RelationsTest extends TestCase
         $this->assertCount(1, $user->clients);
 
         $user = User::where('name', '=', 'John Doe')->first()->toArray();
+
         $this->assertCount(1, $user['client_ids']);
     }
 

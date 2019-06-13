@@ -240,11 +240,11 @@ trait HybridRelations
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
         // instances as well as the relationship instances we need for this.
-        //$foreignKey = $foreignKey ?: $this->getForeignKey() . 's';
+        $foreignPivotKey = $foreignPivotKey ?: $this->getForeignKey() . 's';
 
-        //$instance = new $related;
+        $instance = new $related;
 
-        //$otherKey = $otherKey ?: $instance->getForeignKey() . 's';
+        $relatedPivotKey = $relatedPivotKey ?: $instance->getForeignKey() . 's';
 
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
