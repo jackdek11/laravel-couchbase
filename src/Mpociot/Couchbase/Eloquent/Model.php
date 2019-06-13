@@ -349,7 +349,7 @@ abstract class Model extends BaseModel
      */
     protected function pushAttributeValues($column, array $values, $unique = false)
     {
-        $current = $this->getAttributeFromArray($column) ?: [];
+        $current = (array)$this->getAttributeFromArray($column) ?: [];
 
         foreach ($values as $value) {
             // Don't add duplicate values when we only want unique values.

@@ -271,7 +271,13 @@ trait HybridRelations
         //$query = $instance->newQuery();
 
         //return new BelongsToMany($query, $this, $collection, $foreignKey, $otherKey, $relation);
-        return $this->newBelongsToMany(
+        // return $this->newBelongsToMany(
+        //     $instance->newQuery(), $this, $table, $foreignPivotKey,
+        //     $relatedPivotKey, $parentKey ?: $this->getKeyName(),
+        //     $relatedKey ?: $instance->getKeyName(), $relation
+        // );
+
+        return new BelongsToMany(
             $instance->newQuery(), $this, $table, $foreignPivotKey,
             $relatedPivotKey, $parentKey ?: $this->getKeyName(),
             $relatedKey ?: $instance->getKeyName(), $relation
