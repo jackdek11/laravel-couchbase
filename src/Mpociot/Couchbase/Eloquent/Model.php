@@ -373,7 +373,7 @@ abstract class Model extends BaseModel
      */
     protected function pullAttributeValues($column, array $values)
     {
-        $current = $this->getAttributeFromArray($column) ?: [];
+        $current = (array)$this->getAttributeFromArray($column) ?: [];
 
         foreach ($values as $value) {
             $keys = array_keys($current, $value);
