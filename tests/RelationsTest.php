@@ -105,11 +105,13 @@ class RelationsTest extends TestCase
 
         $items = Item::with('user')->orderBy('user_id', 'desc')->get();
 
-        $user = $items[0]->getRelation('user');
+        //$user = $items[0]->getRelation('user');
+        $user = $items[0]->user()->first();
         $this->assertInstanceOf('User', $user);
         $this->assertEquals('John Doe', $user->name);
         $this->assertEquals(1, count($items[0]->getRelations()));
-        $this->assertEquals(null, $items[3]->getRelation('user'));
+        //$this->assertEquals(null, $items[3]->getRelation('user'));
+        $this->assertEquals(null, $items[3]->user()->first());
     }
 
     /**
@@ -124,10 +126,9 @@ class RelationsTest extends TestCase
         Item::create(['type' => 'bag', 'user_id' => null]);
 
         $user = User::with('items')->find($user->_id);
-        var_dump($user);
 
-
-        $items = $user->getRelation('items');
+        //$items = $user->getRelation('items');
+        $items = $user->items()->get();
         $this->assertEquals(3, count($items));
         $this->assertInstanceOf('Item', $items[0]);
     }
@@ -143,7 +144,8 @@ class RelationsTest extends TestCase
 
         $user = User::with('role')->find($user->_id);
 
-        $role = $user->getRelation('role');
+        //$role = $user->getRelation('role');
+        $role = $user->role()->first();
         $this->assertInstanceOf('Role', $role);
         $this->assertEquals('admin', $role->type);
     }
@@ -304,8 +306,10 @@ class RelationsTest extends TestCase
         $this->assertTrue(array_key_exists('client_ids', $client->users->first()->getAttributes()),
             'Asserting user has attribute client_ids');
 
-        $clients = $user->getRelation('clients');
-        $users = $client->getRelation('users');
+        //$clients = $user->getRelation('clients');
+        $clients = $user->clients()->get();
+        //$users = $client->getRelation('users');
+        $users = $client->users()->get();
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $users);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $clients);
