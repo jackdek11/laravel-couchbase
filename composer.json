@@ -1,8 +1,8 @@
 {
-    "name": "ort-interactive-gmbh/laravel-couchbase",
+    "name": "fazlinovic/laravel-couchbase",
     "description": "(Fork) A Couchbase based Eloquent model and Query builder for Laravel",
     "keywords": ["laravel","eloquent","couchbase","database","model"],
-    "homepage": "https://github.com/ORT-Interactive-GmbH/laravel-couchbase",
+    "homepage": "https://github.com/fazlinovic/laravel-couchbase",
     "authors": [
     ],
     "license" : "MIT",
