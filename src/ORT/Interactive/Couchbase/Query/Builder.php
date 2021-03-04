@@ -667,7 +667,7 @@ class Builder extends BaseBuilder
      * @param  array $bindings
      * @return array
      */
-    protected function cleanBindings(array $bindings)
+    public function cleanBindings(array $bindings)
     {
         return array_values(array_filter(parent::cleanBindings($bindings),
             function ($binding) {
