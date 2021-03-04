@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Relations;
+namespace ORT\Interactive\Couchbase\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -96,29 +96,6 @@ abstract class EmbedsOneOrMany extends Relation
         }
 
         return $models;
-    }
-
-    /**
-     * Shorthand to get the results of the relationship.
-     *
-     * TODO implement columns filter
-     *
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function get($columns = ['*'])
-    {
-        return $this->getResults();
-    }
-
-    /**
-     * Get the number of embedded models.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->getEmbedded());
     }
 
     /**
@@ -266,7 +243,7 @@ abstract class EmbedsOneOrMany extends Relation
      * Convert an array of records to a Collection.
      *
      * @param  array $records
-     * @return \Mpociot\Couchbase\Eloquent\Collection
+     * @return \ORT\Interactive\Couchbase\Eloquent\Collection
      */
     protected function toCollection(array $records = [])
     {
@@ -388,27 +365,5 @@ abstract class EmbedsOneOrMany extends Relation
     protected function getParentKey()
     {
         return $this->parent->getKey();
-    }
-
-    /**
-     * Get the key for comparing against the parent key in "has" query.
-     *
-     * @return string
-     */
-    public function getExistenceCompareKey()
-    {
-        return $this->getQualifiedForeignKeyName();
-    }
-
-
-
-    /**
-     * Get the foreign key for the relationship.
-     *
-     * @return string
-     */
-    public function getQualifiedForeignKeyName()
-    {
-        return $this->foreignKey;
     }
 }

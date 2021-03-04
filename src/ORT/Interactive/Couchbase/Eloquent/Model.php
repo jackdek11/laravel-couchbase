@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Eloquent;
+namespace ORT\Interactive\Couchbase\Eloquent;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-use Mpociot\Couchbase\Query\Builder as QueryBuilder;
-use Mpociot\Couchbase\Query\Grammar;
-use Mpociot\Couchbase\Relations\EmbedsMany;
-use Mpociot\Couchbase\Relations\EmbedsOne;
+use ORT\Interactive\Couchbase\Query\Builder as QueryBuilder;
+use ORT\Interactive\Couchbase\Query\Grammar;
+use ORT\Interactive\Couchbase\Relations\EmbedsMany;
+use ORT\Interactive\Couchbase\Relations\EmbedsOne;
 use Illuminate\Support\Str;
 
 abstract class Model extends BaseModel
@@ -28,6 +28,13 @@ abstract class Model extends BaseModel
      * @var string
      */
     protected $primaryKey = '_id';
+
+    /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The parent relation instance.
@@ -80,7 +87,7 @@ abstract class Model extends BaseModel
      * @param  string $localKey
      * @param  string $foreignKey
      * @param  string $relation
-     * @return \Mpociot\Couchbase\Relations\EmbedsMany
+     * @return \ORT\Interactive\Couchbase\Relations\EmbedsMany
      */
     protected function embedsMany($related, $localKey = null, $foreignKey = null, $relation = null)
     {
@@ -98,7 +105,7 @@ abstract class Model extends BaseModel
         }
 
         if (is_null($foreignKey)) {
-            $foreignKey = snake_case(class_basename($this));
+            $foreignKey = \Str::snake(class_basename($this));
         }
 
         $query = $this->newQuery();
@@ -115,7 +122,7 @@ abstract class Model extends BaseModel
      * @param  string $localKey
      * @param  string $foreignKey
      * @param  string $relation
-     * @return \Mpociot\Couchbase\Relations\EmbedsOne
+     * @return \ORT\Interactive\Couchbase\Relations\EmbedsOne
      */
     protected function embedsOne($related, $localKey = null, $foreignKey = null, $relation = null)
     {
@@ -133,7 +140,7 @@ abstract class Model extends BaseModel
         }
 
         if (is_null($foreignKey)) {
-            $foreignKey = snake_case(class_basename($this));
+            $foreignKey = \Str::snake(class_basename($this));
         }
 
         $query = $this->newQuery();
@@ -180,7 +187,7 @@ abstract class Model extends BaseModel
         }
 
         // Dot notation support.
-        if (str_contains($key, '.') and array_has($this->attributes, $key)) {
+        if (str_contains($key, '.') and \Arr::has($this->attributes, $key)) {
             return $this->getAttributeValue($key);
         }
 
@@ -202,7 +209,7 @@ abstract class Model extends BaseModel
     {
         // Support keys in dot notation.
         if (str_contains($key, '.')) {
-            $attributes = array_dot($this->attributes);
+            $attributes = \Arr::dot($this->attributes);
 
             if (array_key_exists($key, $attributes)) {
                 return $attributes[$key];
@@ -230,7 +237,7 @@ abstract class Model extends BaseModel
                 $value = $this->fromDateTime($value);
             }
 
-            array_set($this->attributes, $key, $value);
+            \Arr::set($this->attributes, $key, $value);
 
             return;
         }
@@ -249,8 +256,8 @@ abstract class Model extends BaseModel
 
         // Convert dot-notation dates.
         foreach ($this->getDates() as $key) {
-            if (str_contains($key, '.') and array_has($attributes, $key)) {
-                array_set($attributes, $key, (string)$this->asDateTime(array_get($attributes, $key)));
+            if (str_contains($key, '.') and \Arr::has($attributes, $key)) {
+                \Arr::set($attributes, $key, (string)$this->asDateTime(array_get($attributes, $key)));
             }
         }
 
@@ -411,8 +418,8 @@ abstract class Model extends BaseModel
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Mpociot\Couchbase\Query\Builder $query
-     * @return \Mpociot\Couchbase\Eloquent\Builder|static
+     * @param  \ORT\Interactive\Couchbase\Query\Builder $query
+     * @return \ORT\Interactive\Couchbase\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)
     {

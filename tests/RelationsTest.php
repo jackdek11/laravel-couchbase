@@ -5,7 +5,7 @@ class RelationsTest extends TestCase
     /**
      * @group RelationsTest
      */
-    public function tearDown():void
+    public function tearDown(): void
     {
         Mockery::close();
 
@@ -105,13 +105,11 @@ class RelationsTest extends TestCase
 
         $items = Item::with('user')->orderBy('user_id', 'desc')->get();
 
-        //$user = $items[0]->getRelation('user');
-        $user = $items[0]->user()->first();
+        $user = $items[0]->getRelation('user');
         $this->assertInstanceOf('User', $user);
         $this->assertEquals('John Doe', $user->name);
         $this->assertEquals(1, count($items[0]->getRelations()));
-        //$this->assertEquals(null, $items[3]->getRelation('user'));
-        $this->assertEquals(null, $items[3]->user()->first());
+        $this->assertEquals(null, $items[3]->getRelation('user'));
     }
 
     /**
@@ -127,8 +125,7 @@ class RelationsTest extends TestCase
 
         $user = User::with('items')->find($user->_id);
 
-        //$items = $user->CQSWTV-109('items');
-        $items = $user->items()->get();
+        $items = $user->getRelation('items');
         $this->assertEquals(3, count($items));
         $this->assertInstanceOf('Item', $items[0]);
     }
@@ -144,8 +141,7 @@ class RelationsTest extends TestCase
 
         $user = User::with('role')->find($user->_id);
 
-        //$role = $user->getRelation('role');
-        $role = $user->role()->first();
+        $role = $user->getRelation('role');
         $this->assertInstanceOf('Role', $role);
         $this->assertEquals('admin', $role->type);
     }
@@ -306,10 +302,8 @@ class RelationsTest extends TestCase
         $this->assertTrue(array_key_exists('client_ids', $client->users->first()->getAttributes()),
             'Asserting user has attribute client_ids');
 
-        //$clients = $user->getRelation('clients');
-        $clients = $user->clients()->get();
-        //$users = $client->getRelation('users');
-        $users = $client->users()->get();
+        $clients = $user->getRelation('clients');
+        $users = $client->getRelation('users');
 
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $users);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $clients);
@@ -537,7 +531,6 @@ class RelationsTest extends TestCase
         $this->assertCount(1, $user->clients);
 
         $user = User::where('name', '=', 'John Doe')->first()->toArray();
-
         $this->assertCount(1, $user['client_ids']);
     }
 
@@ -572,7 +565,7 @@ class RelationsTest extends TestCase
         $user = User::create(['name' => 'John Doe']);
         $groupsRelation = $user->groups();
 
-        $this->assertTrue($groupsRelation instanceof \Mpociot\Couchbase\Relations\BelongsToMany,
+        $this->assertTrue($groupsRelation instanceof \ORT\Interactive\Couchbase\Relations\BelongsToMany,
             'Assert that User->groups is a BelongsToManyRelation');
         $this->assertTrue(is_array($groupsRelation->getBindings()), 'Assert that bindings are an array');
         $this->assertTrue(is_array($groupsRelation->getRawBindings()), 'Assert that raw bindings are an array');
@@ -611,11 +604,8 @@ class RelationsTest extends TestCase
 
         $user = User::with('photos')->find($user->_id);
         $relations = $user->getRelations();
-
         $this->assertTrue(array_key_exists('photos', $relations));
-        //TODO Fix relation loading by key reference
-        //$this->assertEquals(1, $relations['photos']->count());
-        $this->assertEquals(1, $user->photos()->get()->count());
+        $this->assertEquals(1, $relations['photos']->count());
 
         $photos = Photo::with('imageable')->get();
         $relations = $photos[0]->getRelations();

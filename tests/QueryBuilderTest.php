@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-use Mpociot\Couchbase\Query\Builder as Query;
-use Mpociot\Couchbase\Query\Grammar;
+use ORT\Interactive\Couchbase\Query\Builder as Query;
+use ORT\Interactive\Couchbase\Query\Grammar;
 
 class QueryBuilderTest extends TestCase
 {
     /**
      * @group QueryBuilderTest
      */
-    public function tearDown():void
+    public function tearDown(): void
     {
         DB::table('users')->truncate();
         DB::table('items')->truncate();
@@ -19,7 +19,7 @@ class QueryBuilderTest extends TestCase
      */
     public function testCollection()
     {
-        $this->assertInstanceOf('Mpociot\Couchbase\Query\Builder', DB::table('users'));
+        $this->assertInstanceOf('ORT\Interactive\Couchbase\Query\Builder', DB::table('users'));
     }
 
     /**
@@ -690,7 +690,7 @@ class QueryBuilderTest extends TestCase
      */
     private function queryToSql(Query $query)
     {
-        return str_replace_array('?', array_map(function ($value) {
+        return \Str::replaceArray('?', array_map(function ($value) {
             return Grammar::wrapData($value);
         }, $query->getBindings()), $query->toSql());
     }

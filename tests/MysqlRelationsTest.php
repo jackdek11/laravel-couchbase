@@ -2,7 +2,7 @@
 
 class MysqlRelationsTest extends TestCase
 {
-    public function setUp():void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -11,7 +11,7 @@ class MysqlRelationsTest extends TestCase
         MysqlRole::executeSchema();
     }
 
-    public function tearDown():void
+    public function tearDown(): void
     {
         MysqlUser::truncate();
         MysqlBook::truncate();

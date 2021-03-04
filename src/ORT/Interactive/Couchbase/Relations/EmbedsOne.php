@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Relations;
+namespace ORT\Interactive\Couchbase\Relations;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -76,7 +76,7 @@ class EmbedsOne extends EmbedsOneOrMany
         }
 
         // Use array dot notation for better update behavior.
-        $values = array_dot($model->getDirty(), $this->localKey . '.');
+        $values = \Arr::dot($model->getDirty(), $this->localKey . '.');
 
         $result = $this->getBaseQuery()->update($values);
 

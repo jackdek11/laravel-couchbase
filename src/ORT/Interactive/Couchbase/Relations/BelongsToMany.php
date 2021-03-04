@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Relations;
+namespace ORT\Interactive\Couchbase\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentBelongsToMany;
-use Illuminate\Support\Arr;
 
 class BelongsToMany extends EloquentBelongsToMany
 {
@@ -17,7 +16,7 @@ class BelongsToMany extends EloquentBelongsToMany
      */
     public function getHasCompareKey()
     {
-        return $this->getForeignPivotKey();
+        return $this->getForeignKey();
     }
 
     /**
@@ -31,7 +30,7 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Hydrate the pivot table relationship on the models.
      *
-     * @param  array $models
+     * @param array $models
      */
     protected function hydratePivotRelation(array $models)
     {
@@ -41,7 +40,7 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Set the select clause for the relation query.
      *
-     * @param  array $columns
+     * @param array $columns
      * @return array
      */
     protected function getSelectColumns(array $columns = ['*'])
@@ -70,12 +69,12 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array $models
+     * @param array $models
      * @return void
      */
     public function addEagerConstraints(array $models)
     {
-        $this->query->whereAnyIn($this->getForeignPivotKey(), $this->getKeys($models));
+        $this->query->whereAnyIn($this->getForeignKey(), $this->getKeys($models));
     }
 
     /**
@@ -85,19 +84,18 @@ class BelongsToMany extends EloquentBelongsToMany
      */
     protected function setWhere()
     {
-        $foreign = $this->getForeignPivotKey();
-
+        $foreign = $this->getForeignKey();
+        $foreign = $this->query->getGrammar()->wrap($foreign);
         $this->query->whereRaw('ARRAY_CONTAINS(' . $foreign . ', "' . $this->parent->getKey() . '")');
-
         return $this;
     }
 
     /**
      * Save a new model and attach it to the parent model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model $model
-     * @param  array $joining
-     * @param  bool $touch
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array $joining
+     * @param bool $touch
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function save(Model $model, array $joining = [], $touch = true)
@@ -112,9 +110,9 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Create a new instance of the related model.
      *
-     * @param  array $attributes
-     * @param  array $joining
-     * @param  bool $touch
+     * @param array $attributes
+     * @param array $joining
+     * @param bool $touch
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function create(array $attributes = [], array $joining = [], $touch = true)
@@ -134,8 +132,8 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  array $ids
-     * @param  bool $detaching
+     * @param array $ids
+     * @param bool $detaching
      * @return array
      */
     public function sync($ids, $detaching = true)
@@ -162,8 +160,9 @@ class BelongsToMany extends EloquentBelongsToMany
 
         $records = $this->formatSyncList($ids);
 
-        $current = Arr::flatten(Arr::wrap($current));
-
+        if ($current === null) {
+            $current = [];
+        }
         $detach = array_diff($current, array_keys($records));
 
         // We need to make sure we pass a clean array, so that it is not interpreted
@@ -198,9 +197,9 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Update an existing pivot record on the table.
      *
-     * @param  mixed $id
-     * @param  array $attributes
-     * @param  bool $touch
+     * @param mixed $id
+     * @param array $attributes
+     * @param bool $touch
      */
     public function updateExistingPivot($id, array $attributes, $touch = true)
     {
@@ -210,9 +209,9 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Attach a model to the parent.
      *
-     * @param  mixed $id
-     * @param  array $attributes
-     * @param  bool $touch
+     * @param mixed $id
+     * @param array $attributes
+     * @param bool $touch
      */
     public function attach($id, array $attributes = [], $touch = true)
     {
@@ -247,8 +246,8 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Detach models from the relationship.
      *
-     * @param  int|array $ids
-     * @param  bool $touch
+     * @param int|array $ids
+     * @param bool $touch
      * @return int
      */
     public function detach($ids = [], $touch = true)
@@ -287,7 +286,7 @@ class BelongsToMany extends EloquentBelongsToMany
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection $results
+     * @param \Illuminate\Database\Eloquent\Collection $results
      * @return array
      */
     protected function buildDictionary(Collection $results)
@@ -313,7 +312,7 @@ class BelongsToMany extends EloquentBelongsToMany
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    protected function newPivotQuery()
+    public function newPivotQuery()
     {
         return $this->newRelatedQuery();
     }
@@ -336,13 +335,12 @@ class BelongsToMany extends EloquentBelongsToMany
         return $this->foreignPivotKey;
     }
 
-
     /**
      * Get the fully qualified foreign key for the relation.
      *
      * @return string
      */
-    public function getForeignPivotKey()
+    public function getForeignKey()
     {
         return $this->foreignPivotKey;
     }
@@ -351,9 +349,9 @@ class BelongsToMany extends EloquentBelongsToMany
      * Format the sync list so that it is keyed by ID. (Legacy Support)
      * The original function has been renamed to formatRecordsList since Laravel 5.3
      *
-     * @deprecated
-     * @param  array $records
+     * @param array $records
      * @return array
+     * @deprecated
      */
     protected function formatSyncList(array $records)
     {
@@ -366,5 +364,4 @@ class BelongsToMany extends EloquentBelongsToMany
         }
         return $results;
     }
-
 }

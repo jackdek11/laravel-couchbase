@@ -1,7 +1,7 @@
 image: php
 
 services:
-  - mysql:latest
+  - mysql:5.7
 
 variables:
   MYSQL_DATABASE: testing
@@ -10,23 +10,20 @@ variables:
 
 cache:
   paths:
-  - vendor/
+    - vendor/
+    - downloads/
 
 before_script:
+  - mkdir -p downloads
   - set -e
 
-  - apt-get update -yqq
-  - apt-get install wget -yqq
-
   # Install dependencies
-  - apt-get install git libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libpq-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev -yqq
-  - apt-get install lsb-release -yqq #libmcrypt-dev libcurl4-openssl-dev
-
-  # Couchbase PHP SDK
-  - wget http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-4-amd64.deb
-  - dpkg -i couchbase-release-1.0-4-amd64.deb
   - apt-get update -yqq
-  - apt-get install libcouchbase-dev -yqq
+  - apt-get install -yqq wget libssl1.1 libssl-dev git libxml2-dev libexpat1-dev libbz2-dev libgmp3-dev libldap2-dev unixodbc-dev libpq-dev libsqlite3-dev libaspell-dev libsnmp-dev libpcre3-dev libtidy-dev lsb-release gnupg2 net-tools libzip-dev libzip4 unzip
+
+  - test -f downloads/couchbase-release-1.0-6-amd64.deb || curl --output downloads/couchbase-release-1.0-6-amd64.deb http://packages.couchbase.com/releases/couchbase-release/couchbase-release-1.0-6-amd64.deb
+  - dpkg -i downloads/couchbase-release-1.0-6-amd64.deb
+  - apt-get update -yqq
 
   # Couchbase Server
   - bash setup_couchbase_server.sh
@@ -42,42 +39,25 @@ before_script:
 
   # Install Composer and project dependencies.
   - curl -sS https://getcomposer.org/installer | php
-  - php composer.phar install --prefer-dist --no-interaction
+  - php -d default_socket_timeout=1 -d memory_limit=-1 composer.phar global require hirak/prestissimo --no-interaction --prefer-dist --no-ansi
+  - php -d default_socket_timeout=1 -d memory_limit=-1 composer.phar install --no-interaction --prefer-dist --no-ansi
 
-
-test_php7.0_cb4:
+php7.2:
   variables:
-    CB_DATABASE: "test-ing-cb4"
-    CB_VERSION: 4
-  image: php:7.0
+    DEBIAN_VERSION: 9
+    CB_DATABASE: "test-ing"
+  image: php:7.2-stretch
   script:
-  # run laravel tests
-  - php vendor/bin/phpunit --coverage-text --colors=never --coverage-clover=coverage.xml
+    - php vendor/bin/phpunit --colors=never
+  tags:
+    - docker
 
-test_php7.1_cb4:
+php7.3:
   variables:
-    CB_DATABASE: "test-ing-cb4"
-    CB_VERSION: 4
-  image: php:7.1
+    DEBIAN_VERSION: 9
+    CB_DATABASE: "test-ing"
+  image: php:7.3-stretch
   script:
-  # run laravel tests
-  - php vendor/bin/phpunit --coverage-text --colors=never --coverage-clover=coverage.xml
-
-test_php7.1_cb5:
-  variables:
-    CB_DATABASE: "test-ing-cb5"
-    CB_VERSION: 5
-  image: php:7.1
-  script:
-  # run laravel tests
-  - php vendor/bin/phpunit --coverage-text --colors=never --coverage-clover=coverage.xml
-
-# couchbase does not work with debian 9
-#test_php7.2_cb5:
-#  variables:
-#    CB_DATABASE: "test-ing-cb5"
-#    CB_VERSION: 5
-#  image: php:7.2
-#  script:
-#  # run laravel tests
-#  - php vendor/bin/phpunit --coverage-text --colors=never --coverage-clover=coverage.xml
+    - php vendor/bin/phpunit --colors=never
+  tags:
+    - docker

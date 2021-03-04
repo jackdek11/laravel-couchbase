@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Query;
+namespace ORT\Interactive\Couchbase\Query;
 
 use Couchbase\Exception;
 use Illuminate\Contracts\Support\Arrayable;
@@ -10,8 +10,8 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars\Grammar as BaseGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Mpociot\Couchbase\Connection;
-use Mpociot\Couchbase\Helper;
+use ORT\Interactive\Couchbase\Connection;
+use ORT\Interactive\Couchbase\Helper;
 
 class Builder extends BaseBuilder
 {
@@ -244,9 +244,10 @@ class Builder extends BaseBuilder
      * Set the table which the query is targeting.
      *
      * @param  string $type
+     * @param  string|null  $as
      * @return $this
      */
-    public function from($type)
+    public function from($type, $as = null)
     {
         $this->from = $this->connection->getBucketName();
         $this->type = $type;

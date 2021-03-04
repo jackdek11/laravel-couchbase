@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase\Query;
+namespace ORT\Interactive\Couchbase\Query;
 
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
@@ -10,6 +10,7 @@ use Illuminate\Database\Query\Grammars\Grammar as BaseGrammar;
 
 class Grammar extends BaseGrammar
 {
+
     const INDEX_TYPE_VIEW = 'VIEW';
     const INDEX_TYPE_GSI = 'GSI';
     const IDENTIFIER_ENCLOSURE_CHAR = '`';
@@ -100,8 +101,7 @@ class Grammar extends BaseGrammar
             return $value;
         }
 
-        if (self::IDENTIFIER_ENCLOSURE_CHAR === mb_substr($value, 0,
-                1) && self::IDENTIFIER_ENCLOSURE_CHAR === mb_substr($value, -1)) {
+        if (self::IDENTIFIER_ENCLOSURE_CHAR === mb_substr($value, 0, 1) && self::IDENTIFIER_ENCLOSURE_CHAR === mb_substr($value, -1)) {
             if (mb_substr_count($value, self::IDENTIFIER_ENCLOSURE_CHAR) % 2 === 0) {
                 return $value;
             }
@@ -174,7 +174,7 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * @param \Mpociot\Couchbase\Query\Builder $query
+     * @param \ORT\Interactive\Couchbase\Query\Builder $query
      * @return string
      */
     protected function compileReturning(Builder $query)
@@ -291,7 +291,7 @@ class Grammar extends BaseGrammar
     {
         $values = $this->parameterize($where['values'] ?? []);
 
-        $colIdentifier = str_random(32);
+        $colIdentifier = \Str::random(32);
         return 'ANY ' .
             $this->wrapValue($colIdentifier) .
             ' IN ' .
@@ -304,7 +304,7 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * @param \Mpociot\Couchbase\Query\Builder $query
+     * @param \ORT\Interactive\Couchbase\Query\Builder $query
      * @param array $values
      * @return string
      */
@@ -359,7 +359,7 @@ class Grammar extends BaseGrammar
                     ' = ' .
                     $this->wrapData($value) .
                     ' FOR ' .
-                    $this->wrap(str_singular($forIn['alias'])) .
+                    $this->wrap(\Str::singular($forIn['alias'])) .
                     ' IN ' .
                     $this->wrap($forIn['alias']) .
                     ' WHEN ' .

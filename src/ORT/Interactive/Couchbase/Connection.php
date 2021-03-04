@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Mpociot\Couchbase;
+namespace ORT\Interactive\Couchbase;
 
 use Couchbase\N1qlQuery;
 use CouchbaseBucket;
 use CouchbaseCluster;
-use Mpociot\Couchbase\Events\QueryFired;
-use Mpociot\Couchbase\Query\Builder as QueryBuilder;
-use Mpociot\Couchbase\Query\Grammar as QueryGrammar;
+use ORT\Interactive\Couchbase\Events\QueryFired;
+use ORT\Interactive\Couchbase\Query\Builder as QueryBuilder;
+use ORT\Interactive\Couchbase\Query\Grammar as QueryGrammar;
 
 class Connection extends \Illuminate\Database\Connection
 {
@@ -310,11 +310,12 @@ class Connection extends \Illuminate\Database\Connection
      * Begin a fluent query against documents with given type.
      *
      * @param  string $table
+     * @param  string|null  $as
      * @return Query\Builder
      */
-    public function table($table)
+    public function table($table, $as = null)
     {
-        return $this->builder($table);
+        return $this->query()->from($table);
     }
 
     /**
@@ -444,11 +445,11 @@ class Connection extends \Illuminate\Database\Connection
     /**
      * Get the default schema grammar instance.
      *
-     * @return Query\Grammar
+     * @return QueryGrammar
      */
     protected function getDefaultQueryGrammar()
     {
-        return new Query\Grammar();
+        return new QueryGrammar();
     }
 
     /**
@@ -462,4 +463,5 @@ class Connection extends \Illuminate\Database\Connection
     {
         return call_user_func_array([$this->bucket, $method], $parameters);
     }
+
 }
