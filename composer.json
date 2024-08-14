@@ -1,5 +1,5 @@
 {
-  "name": "fazlinovic/laravel-couchbase",
+  "name": "jackdek11/laravel-couchbase",
   "description": "A Couchbase based Eloquent model and Query builder for Laravel",
   "keywords": [
     "laravel",
@@ -8,12 +8,12 @@
     "database",
     "model"
   ],
-  "homepage": "https://github.com/ORT-Interactive-GmbH/laravel-couchbase",
+  "homepage": "https://github.com/jackdek11/laravel-couchbase",
   "authors": [
   ],
   "license": "MIT",
   "require": {
-    "php": "^7.3",
+    "php": "^7.3 | ^8",
     "illuminate/support": "^8",
     "illuminate/container": "^8",
     "illuminate/database": "^8",
